@@ -1,16 +1,16 @@
 import type { Metadata, Viewport } from "next";
-import { Mona_Sans, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Mona Sans — GitHub's typeface (he ships from GitHub); display + body.
-const sans = Mona_Sans({
+// Geist — Vercel's typeface; clean, modern, geometric. Body copy.
+const sans = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-// JetBrains Mono — utility face for labels / metadata (the terminal nod).
-const mono = JetBrains_Mono({
+// Geist Mono — matched monospace for labels / metadata (the terminal nod).
+const mono = Geist_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",

@@ -48,7 +48,7 @@ export function Hero() {
             agentic ai · ml engineer
           </p>
 
-          <h1 className="fade-up fade-up-2 mt-6 text-balance text-[clamp(2.4rem,6vw,4.75rem)] font-bold leading-[1.04] tracking-[-0.03em]">
+          <h1 className="fade-up fade-up-2 mt-6 text-balance text-[clamp(2.4rem,6vw,4.75rem)] font-bold leading-[1.04] tracking-[-0.035em]">
             I build autonomous agents that act across real tools and{" "}
             <span className="text-brand">verify</span>{" "}their own work before
             they&apos;re done.

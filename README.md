@@ -9,7 +9,7 @@ dark, with a WebGL hero, a GitHub-driven project grid, and a local LinkedIn feed
 - **Tailwind CSS v4** + **shadcn/ui** (Base UI primitives)
 - **Motion** for micro-interactions, **Lucide** for icons
 - **React Three Fiber** + **drei** for the hero scene (lazy, perf-gated)
-- **Mona Sans** + **JetBrains Mono** via `next/font`
+- **Geist** + **Geist Mono** via `next/font`
 - Deploys to **Vercel**; GitHub data via the REST API at build time (ISR)
 
 ## Getting started
