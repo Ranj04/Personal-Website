@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675" role="img">
+  <rect width="1200" height="675" fill="#0a0a0a"/>
+  <defs>
+    <radialGradient id="g" cx="72%" cy="28%" r="75%">
+      <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#0a0a0a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <text x="64" y="616" fill="#a1a1a1" font-family="monospace" font-size="30">// sample post image — replace under /public/posts</text>
+</svg>
