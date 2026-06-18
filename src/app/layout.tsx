@@ -1,16 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Geist — Vercel's typeface; clean, modern, geometric. Body copy.
+// Geist — clean, modern sans for body copy and section titles.
 const sans = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
 });
 
-// Geist Mono — matched monospace for labels / metadata (the terminal nod).
-const mono = Geist_Mono({
+// JetBrains Mono — the signature face: hero headline + all labels/metadata.
+// He lives in the terminal and ships from GitHub; the type wears that.
+const mono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",

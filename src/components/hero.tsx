@@ -48,10 +48,11 @@ export function Hero() {
             agentic ai · ml engineer
           </p>
 
-          <h1 className="fade-up fade-up-2 mt-6 text-balance text-[clamp(2.4rem,6vw,4.75rem)] font-bold leading-[1.04] tracking-[-0.035em]">
+          <h1 className="fade-up fade-up-2 mt-6 font-mono text-balance text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.14] tracking-[-0.04em]">
             I build autonomous agents that act across real tools and{" "}
             <span className="text-brand">verify</span>{" "}their own work before
             they&apos;re done.
+            <span className="hero-cursor" aria-hidden="true" />
           </h1>
 
           <p className="fade-up fade-up-3 mt-7 font-mono text-xs tracking-[0.04em] text-muted-foreground">
