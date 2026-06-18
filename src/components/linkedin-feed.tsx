@@ -1,6 +1,5 @@
-import { linkedInPosts } from "@/data/linkedin-posts";
+import { getLinkedInPosts } from "@/lib/linkedin";
 
-// Local data only — no LinkedIn scraping or network calls (their ToS forbids it).
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", {
     year: "numeric",
@@ -9,8 +8,8 @@ function formatDate(iso: string): string {
   });
 }
 
-export function LinkedInFeed() {
-  const posts = [...linkedInPosts].sort((a, b) => b.date.localeCompare(a.date));
+export async function LinkedInFeed() {
+  const posts = await getLinkedInPosts(); // live via Apify, else local fallback
 
   if (posts.length === 0) {
     return (

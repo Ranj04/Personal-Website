@@ -41,6 +41,10 @@ Optional: `NEXT_PUBLIC_SITE_URL=https://your-domain.com` to set absolute OG /
 canonical URLs when using a custom domain (on Vercel the production URL is
 detected automatically).
 
+Optional: `APIFY_TOKEN=...` enables the **live** LinkedIn feed (see below). Without
+it, the feed renders the local seed posts. It's server-only and never shipped to
+the client.
+
 ## Maintaining content
 
 ### Projects (`src/data/projects.config.ts`)
@@ -59,12 +63,20 @@ Descriptions and tech tags are derived from each repo's README (GitHub
 way to improve a card is to improve that repo's README. The **"View Live"** button
 appears only when a repo has a `homepage` (or a `liveOverrides` entry).
 
-### LinkedIn feed (`src/data/linkedin-posts.ts`)
+### LinkedIn feed (live via Apify, with local fallback)
 
-There is **no scraping** — the feed is a local array (LinkedIn's ToS forbids
-scraping). Edit the `linkedInPosts` array: each entry needs `id`, `date` (ISO),
-`text`, and `url` (the real post permalink); `image` (a `/public` path) and
-`tags` are optional. Cards sort newest-first automatically.
+The feed pulls live public posts from the profile via the Apify actor
+`harvestapi/linkedin-profile-posts` (no-cookie: it scrapes with Apify's own
+infrastructure, never the account's login, so it can't get the account
+restricted). Wiring lives in `src/lib/linkedin.ts`; result is cached ~6h.
+
+- Set `APIFY_TOKEN` (above) to enable it. Cost is ~$1.50 / 1,000 posts — pennies
+  here (8 posts, refreshed a few times/day).
+- Without a token, or if the call fails, it falls back to the **local seed array**
+  in `src/data/linkedin-posts.ts` — so the section never goes empty. Edit that
+  array to change the fallback (`id`, `date` ISO, `text`, `url`; `image`/`tags`
+  optional).
+- The profile must be **public** for scraping to return posts.
 
 ## Deploy (Vercel)
 
