@@ -29,7 +29,7 @@ export default async function Home() {
                 Francisco State.
               </p>
               <p>
-              I focus on building autonomous systems and the full-stack and mobile apps around them — with a product lens on what&apos;s worth shipping. Off the clock: hiking and basketball.
+              I focus on building autonomous systems and the full-stack/mobile apps, as well as the harness around them — with a product lens on what&apos;s worth shipping. Off the clock: hiking and basketball.
               </p>
               <p>
                 I work full-stack, live in the terminal, and ship from GitHub.
