@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { SiteNav } from "@/components/site-nav";
 import { SiteFooter } from "@/components/site-footer";
 import { Section } from "@/components/section";
@@ -24,36 +25,39 @@ export default async function Home() {
           <div className="grid gap-10 md:grid-cols-[1.6fr_1fr]">
             <div className="space-y-4 text-muted-foreground">
               <p className="text-lg text-foreground/90">
-                I&apos;m Ranjiv — an agentic AI/ML engineer and CS student at San
+                I&apos;m Ranjiv — an agentic AI/ML engineer and full stack developer. Recent CS grad at San
                 Francisco State.
               </p>
               <p>
-                I build autonomous systems that take an objective, act across
-                real tools, and check their own work before calling it done. Most
-                of my time goes into the harness around the model — the tools,
-                the verification, the retries, the gate that decides whether to
-                act — because that&apos;s where reliability actually comes from.
+              I focus on building autonomous systems and the full-stack and mobile apps around them — with a product lens on what&apos;s worth shipping. Off the clock: hiking and basketball.
               </p>
               <p>
                 I work full-stack, live in the terminal, and ship from GitHub.
-                Lately that&apos;s meant agents for healthcare paperwork, expense
-                approvals, and student catch-up.
               </p>
             </div>
-            <dl className="space-y-3 font-mono text-sm">
-              <div className="flex gap-4">
-                <dt className="w-24 shrink-0 text-muted-foreground">location</dt>
-                <dd>San Francisco</dd>
-              </div>
-              <div className="flex gap-4">
-                <dt className="w-24 shrink-0 text-muted-foreground">focus</dt>
-                <dd>agentic systems · full-stack</dd>
-              </div>
-              <div className="flex gap-4">
-                <dt className="w-24 shrink-0 text-muted-foreground">currently</dt>
-                <dd>CS @ SFSU</dd>
-              </div>
-            </dl>
+            <div className="space-y-6">
+              <Image
+                src="/ranjiv-avatar.jpg"
+                alt="Ranjiv Jithendran"
+                width={112}
+                height={112}
+                className="size-28 rounded-full object-cover ring-1 ring-border"
+              />
+              <dl className="space-y-3 font-mono text-sm">
+                <div className="flex gap-4">
+                  <dt className="w-24 shrink-0 text-muted-foreground">location</dt>
+                  <dd>San Francisco</dd>
+                </div>
+                <div className="flex gap-4">
+                  <dt className="w-24 shrink-0 text-muted-foreground">focus</dt>
+                  <dd>agentic systems · full-stack</dd>
+                </div>
+                <div className="flex gap-4">
+                  <dt className="w-24 shrink-0 text-muted-foreground">currently</dt>
+                  <dd>CS @ SFSU</dd>
+                </div>
+              </dl>
+            </div>
           </div>
         </Section>
 

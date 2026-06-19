@@ -14,12 +14,26 @@ const PROFILE_URL = "https://www.linkedin.com/in/ranjiv-jithendran/";
 const ACTOR = "harvestapi~linkedin-profile-posts";
 const MAX_POSTS = 8;
 
+type ApifyImage = string | { url?: string };
 type ApifyPost = {
   id?: string;
   content?: string;
   linkedinUrl?: string;
   postedAt?: { date?: string };
+  // Post media. The exact field name varies by actor run, so we probe the
+  // common ones defensively and degrade to text-only if none are present.
+  images?: ApifyImage[];
+  image?: string;
 };
+
+/** First usable image URL from a scraped post, or undefined. */
+function firstImage(p: ApifyPost): string | undefined {
+  if (typeof p.image === "string" && p.image) return p.image;
+  const first = p.images?.[0];
+  if (typeof first === "string") return first || undefined;
+  if (first && typeof first.url === "string") return first.url || undefined;
+  return undefined;
+}
 
 function sortDesc(posts: LinkedInPost[]): LinkedInPost[] {
   return [...posts].sort((a, b) => b.date.localeCompare(a.date));
@@ -55,6 +69,7 @@ async function fetchFromApify(): Promise<LinkedInPost[] | null> {
             date: p.postedAt!.date!,
             text: p.content!,
             url: p.linkedinUrl!,
+            image: firstImage(p),
           }) satisfies LinkedInPost,
       );
     return mapped.length > 0 ? mapped : null;

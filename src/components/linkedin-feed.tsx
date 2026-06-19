@@ -18,14 +18,14 @@ export async function LinkedInFeed() {
   }
 
   return (
-    <ul className="grid gap-4 sm:grid-cols-2">
+    <ul className="columns-1 gap-4 sm:columns-2">
       {posts.map((post) => (
-        <li key={post.id} className="h-full">
+        <li key={post.id} className="mb-4 break-inside-avoid">
           <a
             href={post.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex h-full flex-col rounded-lg border border-border bg-card/30 p-5 transition-colors hover:border-foreground/25 hover:bg-card/50"
+            className="group flex flex-col rounded-lg border border-border bg-card/30 p-5 transition-colors hover:border-foreground/25 hover:bg-card/50"
           >
             <div className="flex items-center justify-between font-mono text-xs text-muted-foreground">
               <time dateTime={post.date}>{formatDate(post.date)}</time>
@@ -61,7 +61,7 @@ export async function LinkedInFeed() {
               </ul>
             )}
 
-            <span className="mt-auto pt-5 font-mono text-xs text-brand">
+            <span className="pt-5 font-mono text-xs text-brand">
               read on linkedin <span aria-hidden="true">→</span>
             </span>
           </a>

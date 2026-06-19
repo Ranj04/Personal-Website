@@ -56,7 +56,15 @@ export function Hero() {
           </h1>
 
           <p className="fade-up fade-up-3 mt-7 font-mono text-xs tracking-[0.04em] text-muted-foreground">
-            san francisco · cs @ sfsu · github/Ranj04
+            san francisco · cs @ sfsu ·{" "}
+            <a
+              href="https://github.com/Ranj04"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline-offset-4 transition-colors hover:text-brand hover:underline"
+            >
+              github/Ranj04
+            </a>
           </p>
 
           <div className="fade-up fade-up-4 mt-9 flex flex-wrap items-center gap-6">
@@ -67,7 +75,7 @@ export function Hero() {
                 "h-11 gap-2 bg-brand px-6 text-sm font-medium text-background hover:bg-brand/90",
               )}
             >
-              View the work
+              View my work
               <ArrowRight className="size-4" />
             </a>
             <a
