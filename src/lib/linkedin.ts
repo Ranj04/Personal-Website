@@ -11,28 +11,26 @@ import {
 // account's credentials). Falls back to the local seed file when APIFY_TOKEN is
 // absent or the call fails, so the section never goes empty.
 const PROFILE_URL = "https://www.linkedin.com/in/ranjiv-jithendran/";
+// LinkedIn public handle — used to drop reposts of other people's content
+// (the actor returns those with the original author, not Ranjiv).
+const PROFILE_HANDLE = "ranjiv-jithendran";
 const ACTOR = "harvestapi~linkedin-profile-posts";
 const MAX_POSTS = 8;
 
-type ApifyImage = string | { url?: string };
 type ApifyPost = {
   id?: string;
   content?: string;
   linkedinUrl?: string;
   postedAt?: { date?: string };
-  // Post media. The exact field name varies by actor run, so we probe the
-  // common ones defensively and degrade to text-only if none are present.
-  images?: ApifyImage[];
-  image?: string;
+  // Attached images, highest-res first; empty for text-only posts.
+  postImages?: { url?: string }[];
+  author?: { publicIdentifier?: string };
 };
 
-/** First usable image URL from a scraped post, or undefined. */
+/** First image URL on a post, or undefined for text-only posts. */
 function firstImage(p: ApifyPost): string | undefined {
-  if (typeof p.image === "string" && p.image) return p.image;
-  const first = p.images?.[0];
-  if (typeof first === "string") return first || undefined;
-  if (first && typeof first.url === "string") return first.url || undefined;
-  return undefined;
+  const url = p.postImages?.[0]?.url;
+  return typeof url === "string" && url ? url : undefined;
 }
 
 function sortDesc(posts: LinkedInPost[]): LinkedInPost[] {
@@ -61,7 +59,14 @@ async function fetchFromApify(): Promise<LinkedInPost[] | null> {
 
     const items: ApifyPost[] = await res.json();
     const mapped = items
-      .filter((p) => p.content && p.linkedinUrl && p.postedAt?.date)
+      .filter(
+        (p) =>
+          p.content &&
+          p.linkedinUrl &&
+          p.postedAt?.date &&
+          // Only Ranjiv's own posts — skip bare reposts of others' content.
+          p.author?.publicIdentifier === PROFILE_HANDLE,
+      )
       .map(
         (p) =>
           ({
