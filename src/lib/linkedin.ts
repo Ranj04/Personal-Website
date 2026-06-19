@@ -15,7 +15,10 @@ const PROFILE_URL = "https://www.linkedin.com/in/ranjiv-jithendran/";
 // (the actor returns those with the original author, not Ranjiv).
 const PROFILE_HANDLE = "ranjiv-jithendran";
 const ACTOR = "harvestapi~linkedin-profile-posts";
-const MAX_POSTS = 8;
+// Over-fetch: reposts of others' content get filtered out, so pull more than we
+// render to reliably fill FEED_SIZE own-posts.
+const MAX_POSTS = 12;
+const FEED_SIZE = 6; // most-recent own posts shown in the section
 
 type ApifyPost = {
   id?: string;
@@ -85,11 +88,12 @@ async function fetchFromApify(): Promise<LinkedInPost[] | null> {
 
 // Cache the (paid, slow) actor run ~6h so it isn't hit on every ISR regen;
 // a transient failure self-heals within the window rather than sticking a day.
-const getCachedLivePosts = unstable_cache(fetchFromApify, ["linkedin-posts-v1"], {
+const getCachedLivePosts = unstable_cache(fetchFromApify, ["linkedin-posts-v2"], {
   revalidate: 21600,
 });
 
 export async function getLinkedInPosts(): Promise<LinkedInPost[]> {
   const live = await getCachedLivePosts();
-  return sortDesc(live && live.length > 0 ? live : fallbackPosts);
+  const posts = live && live.length > 0 ? live : fallbackPosts;
+  return sortDesc(posts).slice(0, FEED_SIZE);
 }
