@@ -51,7 +51,7 @@ export function Hero() {
           <h1 className="fade-up fade-up-2 mt-6 font-mono text-balance text-[clamp(2rem,5vw,3.5rem)] font-bold leading-[1.14] tracking-[-0.04em]">
             I build autonomous agents that are{" "}
             <span className="text-brand">production</span>{" "}ready with built-in
-            harness and develop full-stack apps.
+            harness and develop full-stack apps
             <span className="hero-cursor" aria-hidden="true" />
           </h1>
 
