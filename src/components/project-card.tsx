@@ -8,9 +8,15 @@ import { prettyName, type Project } from "@/lib/projects";
 type Variant = "lead" | "card" | "compact";
 
 function Meta({ project }: { project: Project }) {
+  // All languages, most-used first (mirrors the repo-page language bar).
+  const languages = project.languages.length
+    ? project.languages
+    : project.language
+      ? [project.language]
+      : [];
   return (
-    <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
-      {project.language && <span>{project.language}</span>}
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-xs text-muted-foreground">
+      {languages.length > 0 && <span>{languages.join(" · ")}</span>}
       {project.stars > 0 && (
         <span className="flex items-center gap-1">
           <Star className="size-3" />

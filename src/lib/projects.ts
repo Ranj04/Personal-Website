@@ -20,7 +20,8 @@ export type Project = {
   description: string | null;
   url: string; // repo page
   live: string | null; // deploy URL, or null when there's none
-  language: string | null;
+  language: string | null; // primary language (GitHub's dominant-by-bytes)
+  languages: string[]; // all languages, most-used first (repo-page language bar)
   tags: string[]; // tech derived from the README (+ overrides)
   stars: number;
   updatedAt: string;
@@ -131,6 +132,8 @@ export function shapeProjects(
   repos: GitHubRepo[],
   config: ProjectsConfig,
   readmes: Record<string, string> = {},
+  /** repo name → all languages, most-used first (from the /languages endpoint). */
+  languages: Record<string, string[]> = {},
 ): Project[] {
   const hidden = new Set(config.hidden);
   const featuredIndex = new Map(config.featured.map((name, i) => [name, i]));
@@ -142,6 +145,12 @@ export function shapeProjects(
       const override = config.liveOverrides[r.name];
       const homepage = r.homepage?.trim() ? r.homepage : null;
       const ghDescription = r.description?.trim() ? r.description.trim() : null;
+      // Prefer the full language list; fall back to the primary when absent.
+      const repoLanguages = languages[r.name]?.length
+        ? languages[r.name]
+        : r.language
+          ? [r.language]
+          : [];
 
       return {
         name: r.name,
@@ -152,6 +161,7 @@ export function shapeProjects(
         url: r.html_url,
         live: override ?? homepage,
         language: r.language,
+        languages: repoLanguages,
         tags: config.tagOverrides[r.name] ?? detectTags(readme),
         stars: r.stargazers_count,
         updatedAt: r.updated_at,

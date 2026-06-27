@@ -42,10 +42,15 @@ const synthetic: GitHubRepo[] = [
   repo("Needs-Override"),
   repo("Readme-Repo"),
   repo("Boilerplate-Repo"),
-  repo("Gh-Desc", { description: "Curated GitHub description" }),
+  repo("Gh-Desc", { description: "Curated GitHub description", language: "Go" }),
   repo("Email-Repo"),
   repo("Gmail-Repo"),
 ];
+const languages: Record<string, string[]> = {
+  // Multi-language repo: order is "most-used first" and must be preserved.
+  "Readme-Repo": ["TypeScript", "CSS", "JavaScript"],
+  // "Gh-Desc" intentionally absent → must fall back to its primary ("Go").
+};
 const readmes: Record<string, string> = {
   "Readme-Repo":
     "# Cool Title 🚀\n\nAn agentic assistant built with Next.js and OpenAI that does things.\n\n## Setup\n...",
@@ -63,7 +68,7 @@ const cfg: ProjectsConfig = {
   tagOverrides: { "Featured-A": ["Custom-Tag"] },
   descriptionOverrides: {},
 };
-const out = shapeProjects(synthetic, cfg, readmes);
+const out = shapeProjects(synthetic, cfg, readmes, languages);
 const byName = (n: string) => out.find((p) => p.name === n);
 const names = out.map((p) => p.name);
 
@@ -95,6 +100,19 @@ assert("boilerplate README → null description", byName("Boilerplate-Repo")?.de
 assert("GitHub description preferred when present", byName("Gh-Desc")?.description === "Curated GitHub description");
 assert("contact email does NOT create Gmail tag", !byName("Email-Repo")?.tags.includes("Gmail"));
 assert("genuine Gmail integration IS tagged", byName("Gmail-Repo")?.tags.includes("Gmail") === true);
+assert(
+  "all languages listed, most-used order preserved",
+  JSON.stringify(byName("Readme-Repo")?.languages) ===
+    '["TypeScript","CSS","JavaScript"]',
+);
+assert(
+  "languages fall back to primary when endpoint empty/absent",
+  JSON.stringify(byName("Gh-Desc")?.languages) === '["Go"]',
+);
+assert(
+  "no languages + no primary → empty list",
+  JSON.stringify(byName("Featured-A")?.languages) === "[]",
+);
 
 console.log("\n[2] Live GitHub data (Ranj04) shaped with real config + READMEs");
 const headers = { Accept: "application/vnd.github+json", "User-Agent": "verify" };
@@ -121,12 +139,24 @@ if (!Array.isArray(raw)) {
       }),
     ),
   );
-  const real = shapeProjects(repos, projectsConfig, realReadmes);
+  const realLanguages: Record<string, string[]> = Object.fromEntries(
+    await Promise.all(
+      kept.map(async (r) => {
+        const lr = await fetch(`https://api.github.com/repos/Ranj04/${r.name}/languages`, { headers });
+        const bytes: Record<string, number> = lr.ok ? await lr.json() : {};
+        const langs = Object.entries(bytes)
+          .sort(([, a], [, b]) => b - a)
+          .map(([l]) => l);
+        return [r.name, langs] as const;
+      }),
+    ),
+  );
+  const real = shapeProjects(repos, projectsConfig, realReadmes, realLanguages);
   console.log(`  fetched ${repos.length} repos → ${real.length} after shaping`);
   console.table(
     real.map((p) => ({
       name: p.name,
-      lang: p.language ?? "-",
+      languages: p.languages.join(", ") || "-",
       tags: p.tags.join(", ") || "-",
       desc: (p.description ?? "—").slice(0, 50),
     })),
@@ -134,6 +164,25 @@ if (!Array.isArray(raw)) {
   assert(
     "hidden 'Personal-Website' excluded",
     !real.some((p) => p.name === "Personal-Website"),
+  );
+  assert(
+    "hidden 'Ranj04' profile repo excluded",
+    !real.some((p) => p.name === "Ranj04"),
+  );
+  assert(
+    "2D-MOBA tags cleared (false positives removed)",
+    real.find((p) => p.name === "2D-MOBA")?.tags.length === 0,
+  );
+  // Robust to rate-limiting (languages then fall back to primary) and to empty
+  // repos (no primary, no languages): a repo with a primary must list it.
+  assert(
+    "every repo with a primary language lists it",
+    real.every((p) => !p.language || p.languages.includes(p.language)),
+  );
+  const multiLang = real.filter((p) => p.languages.length > 1);
+  console.log(
+    `  ${multiLang.length} repo(s) with multiple languages` +
+      (multiLang.length === 0 ? " (likely rate-limited — re-run with GITHUB_TOKEN)" : ""),
   );
 }
 

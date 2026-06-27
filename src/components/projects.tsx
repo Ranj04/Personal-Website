@@ -13,11 +13,9 @@ export function Projects({ projects }: { projects: Project[] }) {
   const [language, setLanguage] = useState<string | null>(null);
   const [tag, setTag] = useState<string | null>(null);
 
+  // Every language used across all repos (not just each repo's primary).
   const languages = useMemo(
-    () =>
-      Array.from(
-        new Set(projects.map((p) => p.language).filter((l): l is string => !!l)),
-      ).sort(),
+    () => Array.from(new Set(projects.flatMap((p) => p.languages))).sort(),
     [projects],
   );
 
@@ -35,7 +33,7 @@ export function Projects({ projects }: { projects: Project[] }) {
         prettyName(p.name).toLowerCase().includes(q) ||
         p.name.toLowerCase().includes(q) ||
         (p.description?.toLowerCase().includes(q) ?? false);
-      const matchesLang = !language || p.language === language;
+      const matchesLang = !language || p.languages.includes(language);
       const matchesTag = !tag || p.tags.includes(tag);
       return matchesQuery && matchesLang && matchesTag;
     });
@@ -112,7 +110,22 @@ export function Projects({ projects }: { projects: Project[] }) {
       </div>
 
       {/* Results */}
-      {filtered.length === 0 ? (
+      {projects.length === 0 ? (
+        <div className="mt-6 border border-dashed border-border p-12 text-center">
+          <p className="font-mono text-sm text-muted-foreground">
+            Projects are unavailable right now. Check them out directly on{" "}
+            <a
+              href="https://github.com/Ranj04"
+              target="_blank"
+              rel="noreferrer"
+              className="text-brand underline-offset-4 hover:underline"
+            >
+              GitHub
+            </a>
+            .
+          </p>
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="mt-6 border border-dashed border-border p-12 text-center">
           <p className="font-mono text-sm text-muted-foreground">
             No repos match that filter.
