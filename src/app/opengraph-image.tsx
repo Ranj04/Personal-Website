@@ -31,9 +31,9 @@ export default function OpengraphImage() {
             letterSpacing: -2,
           }}
         >
-          <span>I build autonomous agents that&nbsp;</span>
-          <span style={{ color: "#3b82f6" }}>verify</span>
-          <span>&nbsp;their own work.</span>
+          <span>I build autonomous agents that are&nbsp;</span>
+          <span style={{ color: "#3b82f6" }}>production</span>
+          <span>&nbsp;ready with built-in harness and develop full-stack apps.</span>
         </div>
         <div style={{ fontSize: 28, color: "#a1a1a1" }}>
           agentic ai · ml engineer · cs @ sfsu
