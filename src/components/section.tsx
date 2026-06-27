@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Reveal } from "@/components/reveal";
 
 type SectionProps = {
   id: string;
@@ -28,13 +29,16 @@ export function Section({
       id={id}
       aria-labelledby={headingId}
       aria-label={headingId ? undefined : ariaLabel}
-      className={cn("scroll-mt-24 py-24 sm:py-32", className)}
+      className={cn("scroll-mt-24 py-12 sm:py-16", className)}
     >
-      <div className="mx-auto w-full max-w-6xl px-6 sm:px-8">
+      <Reveal className="mx-auto w-full max-w-6xl px-6 sm:px-8">
         {(eyebrow || title) && (
           <div className="mb-10">
             {eyebrow && (
               <p className="mb-3 font-mono text-xs lowercase tracking-[0.08em] text-muted-foreground">
+                <span aria-hidden="true" className="mr-1.5 text-brand">
+                  ▸
+                </span>
                 {eyebrow}
               </p>
             )}
@@ -49,7 +53,7 @@ export function Section({
           </div>
         )}
         {children}
-      </div>
+      </Reveal>
     </section>
   );
 }

@@ -50,11 +50,18 @@ export function SiteNav() {
               <a
                 href={`#${l.id}`}
                 className={cn(
-                  "font-mono text-xs lowercase tracking-[0.06em] text-muted-foreground transition-colors hover:text-foreground",
+                  "group relative font-mono text-xs lowercase tracking-[0.06em] text-muted-foreground transition-colors hover:text-foreground",
                   active === l.id && "text-foreground",
                 )}
               >
                 {l.label}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "absolute -bottom-1.5 left-0 h-px w-full origin-left bg-brand transition-transform duration-300 ease-out group-hover:scale-x-100",
+                    active === l.id ? "scale-x-100" : "scale-x-0",
+                  )}
+                />
               </a>
             </li>
           ))}

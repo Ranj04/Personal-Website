@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { ScrollProgress } from "@/components/scroll-progress";
 import "./globals.css";
 
 // Geist — clean, modern sans for body copy and section titles.
@@ -82,6 +83,11 @@ export default function RootLayout({
       className={`dark ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        {/* Without JS, the scroll-reveal class would stay hidden — force it visible. */}
+        <noscript>
+          <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
+        <ScrollProgress />
         {children}
         <Analytics />
       </body>

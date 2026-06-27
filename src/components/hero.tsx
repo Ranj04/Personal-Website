@@ -72,11 +72,11 @@ export function Hero() {
               href="#projects"
               className={cn(
                 buttonVariants({ variant: "default" }),
-                "h-11 gap-2 bg-brand px-6 text-sm font-medium text-background hover:bg-brand/90",
+                "group h-11 gap-2 bg-brand px-6 text-sm font-medium text-background hover:bg-brand/90",
               )}
             >
               View my work
-              <ArrowRight className="size-4" />
+              <ArrowRight className="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5" />
             </a>
             <a
               href="#contact"

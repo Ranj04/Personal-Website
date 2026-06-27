@@ -110,6 +110,9 @@ function FeaturedCard({
     const px = (e.clientX - r.left) / r.width - 0.5;
     const py = (e.clientY - r.top) / r.height - 0.5;
     el.style.transform = `perspective(1000px) rotateX(${-py * 4}deg) rotateY(${px * 4}deg)`;
+    // Feed the glow overlay the cursor position (as a 0–100% point).
+    el.style.setProperty("--mx", `${(px + 0.5) * 100}%`);
+    el.style.setProperty("--my", `${(py + 0.5) * 100}%`);
   }
   function reset() {
     if (tiltRef.current) tiltRef.current.style.transform = "";
@@ -122,11 +125,20 @@ function FeaturedCard({
         onMouseMove={handleMove}
         onMouseLeave={reset}
         className={cn(
-          "flex h-full flex-col gap-5 rounded-lg border border-border bg-card/30 p-6 transition-[transform,border-color,background-color] duration-200 ease-out will-change-transform hover:border-foreground/25 hover:bg-card/50",
+          "group relative flex h-full flex-col gap-5 overflow-hidden rounded-lg border border-border bg-card/30 p-6 transition-[transform,border-color,background-color] duration-200 ease-out will-change-transform hover:border-foreground/25 hover:bg-card/50",
           lead && "lg:flex-row lg:items-stretch lg:gap-10 lg:p-8",
         )}
       >
-        <div className="flex-1">
+        {/* Brand glow that tracks the cursor (vars set in handleMove). */}
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 z-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{
+            background:
+              "radial-gradient(18rem 18rem at var(--mx, 50%) var(--my, 0%), color-mix(in oklch, var(--brand) 16%, transparent), transparent 60%)",
+          }}
+        />
+        <div className="relative z-10 flex-1">
           <h3
             className={cn(
               "font-semibold tracking-tight",
@@ -152,7 +164,7 @@ function FeaturedCard({
 
         <div
           className={cn(
-            "flex items-center justify-between gap-4",
+            "relative z-10 flex items-center justify-between gap-4",
             lead ? "lg:flex-col lg:items-end lg:justify-end" : "mt-auto",
           )}
         >
