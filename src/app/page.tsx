@@ -26,7 +26,25 @@ export default async function Home() {
             <div className="space-y-4 text-muted-foreground">
               <p className="text-lg text-foreground/90">
                 I&apos;m Ranjiv — an agentic AI/ML engineer and full stack developer. Recent CS grad at San
-                Francisco State.
+                Francisco State, now a Founding Engineer at{" "}
+                <a
+                  href="https://useavior.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand transition-colors hover:text-brand-2"
+                >
+                  Avior Technology
+                </a>
+                .
+              </p>
+              <p>
+                Avior is a pre-seed stablecoin neobank. I work on the product that coordinates wallets,
+                fiat and crypto rails, card issuing, cashback, and identity so they feel like one global
+                account.
+              </p>
+              <p>
+                I shipped that on both the web app and the mobile app, and I worked on the AI CFO: the
+                agent that can keep the books and actually move money when you ask it to.
               </p>
               <p>
               I focus on building autonomous systems and the full-stack/mobile apps, as well as the harness around them — with a product lens on what&apos;s worth shipping. Off the clock: hiking and basketball.
@@ -54,7 +72,7 @@ export default async function Home() {
                 </div>
                 <div className="flex gap-4">
                   <dt className="w-24 shrink-0 text-muted-foreground">currently</dt>
-                  <dd>CS @ SFSU</dd>
+                  <dd>founding engineer @ avior</dd>
                 </div>
               </dl>
             </div>

@@ -56,7 +56,7 @@ export function Hero() {
           </h1>
 
           <p className="fade-up fade-up-3 mt-7 font-mono text-xs tracking-[0.04em] text-muted-foreground">
-            san francisco · cs @ sfsu ·{" "}
+            san francisco · founding engineer @ avior ·{" "}
             <a
               href="https://github.com/Ranj04"
               target="_blank"
