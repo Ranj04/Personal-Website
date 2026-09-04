@@ -38,8 +38,14 @@ GITHUB_TOKEN=your_token_here
 - The site still builds without a token (unauthenticated 60/hr), just rate-limited.
 
 Optional: `NEXT_PUBLIC_SITE_URL=https://your-domain.com` to set absolute OG /
-canonical URLs when using a custom domain (on Vercel the production URL is
-detected automatically).
+canonical / sitemap URLs when using a custom domain (on Vercel the production
+URL is detected automatically). After you attach the domain in Vercel → Project
+→ Settings → Domains, set this env var to that URL in Production.
+
+Optional: `GOOGLE_SITE_VERIFICATION=...` injects the Google Search Console
+meta tag. In Search Console, add the property, choose the HTML-tag method, and
+paste the `content` value here (Production env in Vercel). Then submit
+`https://your-domain.com/sitemap.xml`.
 
 Optional: `APIFY_TOKEN=...` enables the **live** LinkedIn feed (see below). Without
 it, the feed renders the local seed posts. It's server-only and never shipped to
@@ -82,19 +88,24 @@ restricted). Wiring lives in `src/lib/linkedin.ts`; result is cached ~6h.
 
 1. Push this repo to GitHub.
 2. In Vercel: **New Project → import the repo** (framework auto-detected as Next.js).
-3. Add the environment variable **`GITHUB_TOKEN`** in Project → Settings →
-   Environment Variables (Production + Preview).
-4. Deploy. The production URL serves real GitHub data; ISR refreshes hourly.
+3. Add environment variables in Project → Settings → Environment Variables
+   (Production + Preview):
+   - **`GITHUB_TOKEN`** (required for reliable GitHub fetches)
+   - **`NEXT_PUBLIC_SITE_URL`** (set this once a custom domain is attached)
+   - **`GOOGLE_SITE_VERIFICATION`** (Search Console HTML-tag `content` value)
+4. Attach a custom domain under Settings → Domains, then deploy. ISR refreshes
+   GitHub data hourly. Speed Insights and Analytics show up in the Vercel
+   dashboard after production traffic.
 
 ## Project structure
 
 ```
 src/
-  app/            layout, page, globals.css, opengraph-image, icon, not-found
+  app/            layout, page, globals.css, opengraph-image, sitemap, robots, icon, not-found
   components/     hero, hero-scene (R3F), projects, project-card, linkedin-feed,
-                  site-nav, site-footer, section, socials, ui/
+                  site-nav, site-footer, section, socials, json-ld, ui/
   data/           projects.config.ts, linkedin-posts.ts
   hooks/          use-capabilities.ts (reduced-motion / low-power gating)
-  lib/            github.ts (fetch+ISR), projects.ts (pure shaping)
+  lib/            site.ts (URL + JSON-LD), github.ts (fetch+ISR), projects.ts (pure shaping)
 scripts/          verify-projects.mts (data-layer test), shot.mjs (screenshots)
 ```

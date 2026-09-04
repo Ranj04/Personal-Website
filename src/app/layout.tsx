@@ -1,7 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { ScrollProgress } from "@/components/scroll-progress";
+import { JsonLd } from "@/components/json-ld";
+import {
+  getSiteUrl,
+  githubUrl,
+  siteDescription,
+  siteName,
+  siteTitle,
+} from "@/lib/site";
 import "./globals.css";
 
 // Geist — clean, modern sans for body copy and section titles.
@@ -19,52 +28,48 @@ const mono = JetBrains_Mono({
   display: "swap",
 });
 
-// Production URL for absolute OG/canonical links. Vercel injects
-// VERCEL_PROJECT_PRODUCTION_URL automatically; override with NEXT_PUBLIC_SITE_URL
-// once a custom domain is set.
-const siteUrl =
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  (process.env.VERCEL_PROJECT_PRODUCTION_URL
-    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : "http://localhost:3000");
-
-const description =
-  "Ranjiv Jithendran builds autonomous AI agents that act across real tools and verify their own work. Agentic AI/ML engineer, full-stack developer, CS @ SFSU.";
+const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Ranjiv Jithendran — Agentic AI/ML Engineer",
-    template: "%s · Ranjiv Jithendran",
+    default: siteTitle,
+    template: `%s · ${siteName}`,
   },
-  description,
-  applicationName: "Ranjiv Jithendran",
-  authors: [{ name: "Ranjiv Jithendran", url: "https://github.com/Ranj04" }],
-  creator: "Ranjiv Jithendran",
+  description: siteDescription,
+  applicationName: siteName,
+  authors: [{ name: siteName, url: githubUrl }],
+  creator: siteName,
   keywords: [
     "Ranjiv Jithendran",
+    "Avior",
+    "Avior Technology",
+    "founding engineer",
     "agentic AI",
     "AI engineer",
     "ML engineer",
     "autonomous agents",
     "full-stack developer",
-    "SFSU",
+    "San Francisco",
   ],
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
-    siteName: "Ranjiv Jithendran",
-    title: "Ranjiv Jithendran — Agentic AI/ML Engineer",
-    description,
+    siteName,
+    title: siteTitle,
+    description: siteDescription,
     url: "/",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Ranjiv Jithendran — Agentic AI/ML Engineer",
-    description,
+    title: siteTitle,
+    description: siteDescription,
   },
   robots: { index: true, follow: true },
+  ...(process.env.GOOGLE_SITE_VERIFICATION
+    ? { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }
+    : {}),
 };
 
 export const viewport: Viewport = {
@@ -83,6 +88,7 @@ export default function RootLayout({
       className={`dark ${sans.variable} ${mono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <JsonLd />
         {/* Without JS, the scroll-reveal class would stay hidden — force it visible. */}
         <noscript>
           <style>{`.reveal{opacity:1!important;transform:none!important}`}</style>
@@ -90,6 +96,7 @@ export default function RootLayout({
         <ScrollProgress />
         {children}
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Ranjiv Jithendran — Agentic AI/ML Engineer";
+export const alt = "Ranjiv Jithendran — Founding Engineer at Avior";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -36,7 +36,7 @@ export default function OpengraphImage() {
           <span>&nbsp;ready with built-in harness and develop full-stack apps.</span>
         </div>
         <div style={{ fontSize: 28, color: "#a1a1a1" }}>
-          agentic ai · ml engineer · cs @ sfsu
+          founding engineer @ avior · san francisco
         </div>
       </div>
     ),
