@@ -32,4 +32,18 @@ export const projectsConfig: ProjectsConfig = {
   // Force a description when neither GitHub nor the README gives a good one.
   // e.g. "My-Repo": "A one-line summary."
   descriptionOverrides: {},
+
+  // Repos outside Ranj04's public list, as "owner/name". Private repos only
+  // appear when GITHUB_TOKEN can read them, and render without a repo link.
+  extraRepos: [
+    // Private
+    "Ranj04/ascend",
+    "Ranj04/petal",
+    "Ranj04/lightsage",
+    "Ranj04/Lustro-Detailing-LLC",
+    // Team repos with commits from Ranj04
+    "Eman-Gon/Almanac",
+    "Eman-Gon/RescueOpsHackWithBay",
+    "Eman-Gon/Writ",
+  ],
 };

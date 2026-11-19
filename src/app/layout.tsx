@@ -52,7 +52,11 @@ export const metadata: Metadata = {
     "full-stack developer",
     "San Francisco",
   ],
-  alternates: { canonical: "/" },
+  alternates: {
+    canonical: "/",
+    // Points AI agents / LLM crawlers at the Markdown summary (llmstxt.org).
+    types: { "text/markdown": "/llms.txt" },
+  },
   openGraph: {
     type: "website",
     siteName,

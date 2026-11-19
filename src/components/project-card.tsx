@@ -30,15 +30,19 @@ function Meta({ project }: { project: Project }) {
 function Links({ project }: { project: Project }) {
   return (
     <div className="flex items-center gap-4 font-mono text-xs">
-      <a
-        href={project.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-        aria-label={`view repo ${prettyName(project.name)}`}
-      >
-        view repo <span aria-hidden="true">→</span>
-      </a>
+      {project.url ? (
+        <a
+          href={project.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          aria-label={`view repo ${prettyName(project.name)}`}
+        >
+          view repo <span aria-hidden="true">→</span>
+        </a>
+      ) : (
+        <span className="text-muted-foreground/70">private repo</span>
+      )}
       {project.live && (
         <a
           href={project.live}

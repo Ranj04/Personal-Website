@@ -4,6 +4,7 @@
 /** The subset of the GitHub repo payload we consume. */
 export type GitHubRepo = {
   name: string;
+  full_name: string; // "owner/name"
   description: string | null;
   html_url: string;
   homepage: string | null;
@@ -12,13 +13,14 @@ export type GitHubRepo = {
   updated_at: string;
   fork: boolean;
   archived: boolean;
+  private: boolean;
 };
 
 /** A repo shaped for the UI. */
 export type Project = {
   name: string;
   description: string | null;
-  url: string; // repo page
+  url: string | null; // repo page, or null for private repos (would 404 for visitors)
   live: string | null; // deploy URL, or null when there's none
   language: string | null; // primary language (GitHub's dominant-by-bytes)
   languages: string[]; // all languages, most-used first (repo-page language bar)
@@ -36,6 +38,11 @@ export type ProjectsConfig = {
   tagOverrides: Record<string, string[]>;
   /** Force the description for a repo (wins over GitHub/README). */
   descriptionOverrides: Record<string, string>;
+  /**
+   * "owner/name" repos to show beyond the user's own public ones: private repos
+   * (need a GITHUB_TOKEN that can read them) and repos owned by someone else.
+   */
+  extraRepos: string[];
 };
 
 /** kebab/snake repo name → readable title, e.g. "What-Did-I-Miss-" → "What Did I Miss". */
@@ -158,7 +165,7 @@ export function shapeProjects(
           config.descriptionOverrides[r.name] ??
           ghDescription ??
           readmeSummary(readme),
-        url: r.html_url,
+        url: r.private ? null : r.html_url,
         live: override ?? homepage,
         language: r.language,
         languages: repoLanguages,

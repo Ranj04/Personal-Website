@@ -15,10 +15,10 @@ function authHeaders(): HeadersInit {
   };
 }
 
-/** Raw README text for a repo, or "" when it has none / fails. */
-async function fetchReadme(repo: string): Promise<string> {
+/** Raw README text for an "owner/name" repo, or "" when it has none / fails. */
+async function fetchReadme(fullName: string): Promise<string> {
   try {
-    const res = await fetch(`${API}/repos/${GITHUB_USER}/${repo}/readme`, {
+    const res = await fetch(`${API}/repos/${fullName}/readme`, {
       headers: { ...authHeaders(), Accept: "application/vnd.github.raw" },
       next: { revalidate: 3600 },
     });
@@ -33,9 +33,9 @@ async function fetchReadme(repo: string): Promise<string> {
  * repo-page language bar). The /languages endpoint returns a { lang: bytes } map;
  * we sort by bytes desc and keep the names. Empty array on failure / no languages.
  */
-async function fetchLanguages(repo: string): Promise<string[]> {
+async function fetchLanguages(fullName: string): Promise<string[]> {
   try {
-    const res = await fetch(`${API}/repos/${GITHUB_USER}/${repo}/languages`, {
+    const res = await fetch(`${API}/repos/${fullName}/languages`, {
       headers: authHeaders(),
       next: { revalidate: 3600 },
     });
@@ -50,8 +50,29 @@ async function fetchLanguages(repo: string): Promise<string[]> {
 }
 
 /**
- * Fetch + shape the public repos at build time (revalidated hourly via ISR).
- * Also pulls each kept repo's README to derive descriptions + tech tags.
+ * A single "owner/name" repo (used for extraRepos), or null when it's missing or
+ * the token can't see it — e.g. a private repo with no GITHUB_TOKEN set.
+ */
+async function fetchRepo(fullName: string): Promise<GitHubRepo | null> {
+  try {
+    const res = await fetch(`${API}/repos/${fullName}`, {
+      headers: authHeaders(),
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) {
+      console.error(`[getProjects] ${fullName}: GitHub API error ${res.status}`);
+      return null;
+    }
+    return await res.json();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Fetch + shape the public repos at build time (revalidated hourly via ISR),
+ * plus any `extraRepos` from the config. Also pulls each kept repo's README to
+ * derive descriptions + tech tags.
  * GITHUB_TOKEN (server-only) raises the rate limit; never reaches the client.
  *
  * Degrades gracefully: a GitHub failure (rate limit, network, etc.) returns an
@@ -82,7 +103,19 @@ export async function getProjects(): Promise<Project[]> {
     return [];
   }
 
-  const repos: GitHubRepo[] = await res.json();
+  const owned: GitHubRepo[] = await res.json();
+
+  // Private and other-owner repos opted in via config. Skip any already listed.
+  const ownedNames = new Set(owned.map((r) => r.full_name.toLowerCase()));
+  const extras = await Promise.all(
+    projectsConfig.extraRepos
+      .filter((fullName) => !ownedNames.has(fullName.toLowerCase()))
+      .map(fetchRepo),
+  );
+  const repos = [
+    ...owned,
+    ...extras.filter((r): r is GitHubRepo => r !== null),
+  ];
 
   // Only fetch per-repo data (README + languages) for repos that will show.
   const hidden = new Set(projectsConfig.hidden);
@@ -94,7 +127,10 @@ export async function getProjects(): Promise<Project[]> {
       async (r) =>
         [
           r.name,
-          await Promise.all([fetchReadme(r.name), fetchLanguages(r.name)]),
+          await Promise.all([
+            fetchReadme(r.full_name),
+            fetchLanguages(r.full_name),
+          ]),
         ] as const,
     ),
   );

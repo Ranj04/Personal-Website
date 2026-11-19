@@ -16,6 +16,7 @@ function assert(label: string, cond: boolean) {
 function repo(name: string, over: Partial<GitHubRepo> = {}): GitHubRepo {
   return {
     name,
+    full_name: `x/${name}`,
     description: null,
     html_url: `https://github.com/x/${name}`,
     homepage: null,
@@ -24,6 +25,7 @@ function repo(name: string, over: Partial<GitHubRepo> = {}): GitHubRepo {
     updated_at: "2022-01-01T00:00:00Z",
     fork: false,
     archived: false,
+    private: false,
     ...over,
   };
 }
@@ -45,6 +47,7 @@ const synthetic: GitHubRepo[] = [
   repo("Gh-Desc", { description: "Curated GitHub description", language: "Go" }),
   repo("Email-Repo"),
   repo("Gmail-Repo"),
+  repo("Private-Repo", { private: true, homepage: "https://private.example" }),
 ];
 const languages: Record<string, string[]> = {
   // Multi-language repo: order is "most-used first" and must be preserved.
@@ -67,6 +70,7 @@ const cfg: ProjectsConfig = {
   liveOverrides: { "Needs-Override": "https://override.example" },
   tagOverrides: { "Featured-A": ["Custom-Tag"] },
   descriptionOverrides: {},
+  extraRepos: [],
 };
 const out = shapeProjects(synthetic, cfg, readmes, languages);
 const byName = (n: string) => out.find((p) => p.name === n);
@@ -100,6 +104,9 @@ assert("boilerplate README → null description", byName("Boilerplate-Repo")?.de
 assert("GitHub description preferred when present", byName("Gh-Desc")?.description === "Curated GitHub description");
 assert("contact email does NOT create Gmail tag", !byName("Email-Repo")?.tags.includes("Gmail"));
 assert("genuine Gmail integration IS tagged", byName("Gmail-Repo")?.tags.includes("Gmail") === true);
+assert("private repo has no repo link", byName("Private-Repo")?.url === null);
+assert("private repo keeps its live link", byName("Private-Repo")?.live === "https://private.example");
+assert("public repo links to GitHub", byName("Recent-Normal")?.url === "https://github.com/x/Recent-Normal");
 assert(
   "all languages listed, most-used order preserved",
   JSON.stringify(byName("Readme-Repo")?.languages) ===
@@ -132,7 +139,7 @@ if (!Array.isArray(raw)) {
   const realReadmes: Record<string, string> = Object.fromEntries(
     await Promise.all(
       kept.map(async (r) => {
-        const rr = await fetch(`https://api.github.com/repos/Ranj04/${r.name}/readme`, {
+        const rr = await fetch(`https://api.github.com/repos/${r.full_name}/readme`, {
           headers: { ...headers, Accept: "application/vnd.github.raw" },
         });
         return [r.name, rr.ok ? await rr.text() : ""] as const;
@@ -142,7 +149,7 @@ if (!Array.isArray(raw)) {
   const realLanguages: Record<string, string[]> = Object.fromEntries(
     await Promise.all(
       kept.map(async (r) => {
-        const lr = await fetch(`https://api.github.com/repos/Ranj04/${r.name}/languages`, { headers });
+        const lr = await fetch(`https://api.github.com/repos/${r.full_name}/languages`, { headers });
         const bytes: Record<string, number> = lr.ok ? await lr.json() : {};
         const langs = Object.entries(bytes)
           .sort(([, a], [, b]) => b - a)

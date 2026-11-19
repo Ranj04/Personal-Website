@@ -34,6 +34,9 @@ GITHUB_TOKEN=your_token_here
   builds reliable (the project list **and** each repo's README are fetched).
 - For public repos **no scopes are required** — create a fine-grained token with
   read-only public access (or a classic token with no scopes). Least privilege.
+- Private repos listed in `extraRepos` need a fine-grained token with access to
+  those repos and read-only **Contents** + **Metadata**. Without it they're
+  silently skipped.
 - It's server-only and never shipped to the client. `.env*` is gitignored.
 - The site still builds without a token (unauthenticated 60/hr), just rate-limited.
 
@@ -63,6 +66,11 @@ hourly via ISR. Curate with this file (repo names must match GitHub exactly):
 - `liveOverrides` — manual deploy URL when a repo's GitHub `homepage` isn't set.
 - `tagOverrides` — force the tech tags when README auto-detection misses.
 - `descriptionOverrides` — force a card description.
+- `extraRepos` — `"owner/name"` repos beyond the public `Ranj04` list: private
+  repos (shown without a repo link) and team repos owned by someone else.
+
+The site also serves `/llms.txt`, a Markdown summary (bio, contact, projects)
+for AI agents and LLM crawlers, built from the same GitHub data.
 
 Descriptions and tech tags are derived from each repo's README (GitHub
 `description` → README first paragraph; tags from a keyword scan). The cleanest
